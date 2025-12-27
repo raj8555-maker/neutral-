@@ -1,14 +1,11 @@
  const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
 const app = express();
 app.use(cors());
 app.use(express.json());
 // 🔗 MongoDB connection
-mongoose.connect(
-  "mongodb+srv://royalrajsince2005_db_user:HS5uBuMINQSTDmsJ@cluster0.cdix9d9.mongodb.net/testdb?retryWrites=true&w=majority&appName=Cluster0"
-)
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB connected successfully ✅"))
 .catch(err => console.log("MongoDB connection error ❌", err));
 
