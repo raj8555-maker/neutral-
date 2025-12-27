@@ -1,0 +1,39 @@
+ const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+// 🔗 MongoDB connection
+mongoose.connect(
+  "mongodb+srv://royalrajsince2005_db_user:HS5uBuMINQSTDmsJ@cluster0.cdix9d9.mongodb.net/testdb?retryWrites=true&w=majority&appName=Cluster0"
+)
+.then(() => console.log("MongoDB connected successfully ✅"))
+.catch(err => console.log("MongoDB connection error ❌", err));
+
+// 📦 Schema
+const User = mongoose.model("User", {
+  name: String,
+  email: String
+});
+// 📥 Get all users
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
+app.post("/save", async (req, res) => {
+  await User.create(req.body);
+  res.json({ message: "Data saved permanently 🎉" });
+});
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
+
+
