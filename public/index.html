@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Register User</title>
+  <title>Login System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      font-family: Arial;
-      background: #f2f2f2;
-      padding: 20px;
-    }
+    body { font-family: Arial; background: #f2f2f2; }
     .box {
       max-width: 400px;
       background: white;
       padding: 20px;
-      margin: auto;
+      margin: 50px auto;
       border-radius: 5px;
     }
     input, button {
@@ -25,54 +21,56 @@
       background: #0095f6;
       color: white;
       border: none;
-      cursor: pointer;
     }
-    p {
-      margin-top: 10px;
-      text-align: center;
-    }
+    p { text-align: center; }
   </style>
 </head>
 
 <body>
   <div class="box">
-    <h2>Register User</h2>
+    <h2 id="title">Register</h2>
 
     <input id="name" placeholder="Name">
     <input id="email" placeholder="Email">
-    <button onclick="saveUser()">Save</button>
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="submit()">Submit</button>
 
     <p id="msg"></p>
+    <p><a href="#" onclick="toggle()">Switch to Login</a></p>
   </div>
 
-  <script>
-    async function saveUser() {
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const msg = document.getElementById("msg");
+<script>
+let mode = "register";
 
-      msg.style.color = "red";
-      msg.innerText = "";
+function toggle() {
+  mode = mode === "register" ? "login" : "register";
+  document.getElementById("title").innerText =
+    mode === "register" ? "Register" : "Login";
+  document.getElementById("name").style.display =
+    mode === "register" ? "block" : "none";
+}
 
-      const res = await fetch("/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email })
-      });
+async function submit() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
 
-      const data = await res.json();
+  const body = mode === "register"
+    ? { name, email, password }
+    : { email, password };
 
-      if (!res.ok) {
-        msg.innerText = data.error;
-        return;
-      }
+  const res = await fetch("/" + mode, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
 
-      msg.style.color = "green";
-      msg.innerText = data.message;
-
-      document.getElementById("name").value = "";
-      document.getElementById("email").value = "";
-    }
-  </script>
+  const data = await res.json();
+  msg.style.color = res.ok ? "green" : "red";
+  msg.innerText = data.message || data.error;
+}
+</script>
 </body>
 </html>
