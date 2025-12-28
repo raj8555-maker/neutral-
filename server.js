@@ -4,6 +4,7 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 // 🔗 MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB connected successfully ✅"))
@@ -31,7 +32,9 @@ app.post("/save", async (req, res) => {
   res.json({ message: "Data saved permanently 🎉" });
 });
 const PORT = process.env.PORT || 3000;
-
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
 });

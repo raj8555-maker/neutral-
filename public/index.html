@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+  <h2>Add User</h2>
+
+  <input id="name" placeholder="Name" />
+  <br><br>
+  <input id="email" placeholder="Email" />
+  <br><br>
+  <button onclick="saveUser()">Save</button>
+
+  <h2>Users</h2>
+  <ul id="users"></ul>
+
+  <script>
+    const API = "https://al-backend-5pbe.onrender.com";
+
+    async function loadUsers() {
+      const res = await fetch(API + "/users");
+      const data = await res.json();
+
+      const list = document.getElementById("users");
+      list.innerHTML = "";
+
+      data.forEach(u => {
+        const li = document.createElement("li");
+        li.innerText = u.name + " - " + u.email;
+        list.appendChild(li);
+      });
+    }
+
+    async function saveUser() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+
+      await fetch(API + "/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email })
+      });
+
+      loadUsers();
+    }
+
+    loadUsers();
+  </script>
+
+</body>
+</html>
