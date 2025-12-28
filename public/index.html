@@ -1,54 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>User App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>User Registration</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #fafafa;
+      padding: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+    }
+    button {
+      background: #0095f6;
+      color: white;
+      border: none;
+      font-size: 16px;
+    }
+    .user {
+      background: white;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
+
 <body>
+  <h2>Register User</h2>
 
-  <h2>Add User</h2>
-
-  <input id="name" placeholder="Name" />
-  <br><br>
-  <input id="email" placeholder="Email" />
-  <br><br>
+  <input id="name" placeholder="Name">
+  <input id="email" placeholder="Email">
   <button onclick="saveUser()">Save</button>
 
-  <h2>Users</h2>
-  <ul id="users"></ul>
+  <h3>All Users</h3>
+  <div id="users"></div>
 
   <script>
-    const API = "https://al-backend-5pbe.onrender.com";
-
-    async function loadUsers() {
-      const res = await fetch(API + "/users");
-      const data = await res.json();
-
-      const list = document.getElementById("users");
-      list.innerHTML = "";
-
-      data.forEach(u => {
-        const li = document.createElement("li");
-        li.innerText = u.name + " - " + u.email;
-        list.appendChild(li);
-      });
-    }
+    const API = ""; // same domain (Render URL)
 
     async function saveUser() {
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
 
-      await fetch(API + "/save", {
+      await fetch("/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email })
       });
 
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+
       loadUsers();
+    }
+
+    async function loadUsers() {
+      const res = await fetch("/users");
+      const data = await res.json();
+
+      const usersDiv = document.getElementById("users");
+      usersDiv.innerHTML = "";
+
+      data.forEach(u => {
+        usersDiv.innerHTML += `
+          <div class="user">
+            <b>${u.name}</b><br>
+            ${u.email}
+          </div>
+        `;
+      });
     }
 
     loadUsers();
   </script>
-
 </body>
 </html>
