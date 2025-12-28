@@ -13,6 +13,9 @@ mongoose.connect(process.env.MONGO_URI)
 const User = mongoose.model("User", {
   name: String,
   email: String
+// Root route
+app.get("/", (req, res) => {
+  res.send("API is running safely ✅");
 });
 // 📥 Get all users
 app.get("/users", async (req, res) => {
